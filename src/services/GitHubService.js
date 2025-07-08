@@ -29,7 +29,8 @@ export class GitHubService {
         author: data.user.login,
         baseBranch: data.base.ref,
         headBranch: data.head.ref,
-        url: data.html_url
+        url: data.html_url,
+        head: data.head
       };
     } catch (error) {
       logger.error('Failed to fetch PR details:', error);
@@ -78,7 +79,9 @@ export class GitHubService {
         pull_number: prNumber,
         body: comment.body,
         path: comment.path,
-        line: comment.line
+        line: comment.line,
+        position: comment.line,                      // Position of the line in the diff
+        commit_id: comment.commit_id
       });
 
       logger.info(`Posted comment on ${comment.path}:${comment.line}`);

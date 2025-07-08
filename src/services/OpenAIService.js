@@ -90,7 +90,6 @@ Your task is to review code diffs and provide **constructive, actionable feedbac
 3. Performance: Efficiency issues, optimization opportunities
 4. Architecture: Design patterns, SOLID principles, clean design
 5. Testing: Missing/insufficient tests, test structure
-6. Documentation: Code comments, API docs, clarity
 
 `;
 
@@ -131,10 +130,10 @@ Response format (JSON):
       "line": 10,
       "title": "Short issue title",
       "description": "What is wrong and why",
-      "severity": "high|medium|low|info",
-      "category": "quality|security|performance|architecture|testing|documentation",
-      "suggestion": "What to do to improve",
-      "example": "Optional code snippet",
+      "severity": "error|high|medium|low|info",
+      "category": "quality|security|performance|architecture|testing",
+      "suggestion": "Code change to improve this issue (e.g., refactor a function, change variable name, optimize query)",
+      "example": "Example of the improved code",
       "language": "typescript|csharp"
     }
   ],
@@ -174,11 +173,10 @@ Focus on:
 - Performance
 - Architecture
 - Testing
-- Documentation
+**Only review the new additions (lines marked with '+')**. Ignore any deletions (lines marked with '-') or unchanged code. 
 
 Be specific about line numbers. Provide actionable suggestions, not just generic observations.`;
   }
-
   parseAnalysis(analysis) {
     try {
       // Try to parse as JSON first
@@ -196,38 +194,15 @@ Be specific about line numbers. Provide actionable suggestions, not just generic
   }
 
   parseTextAnalysis(analysis) {
-    const lines = analysis.split('\n');
-    const issues = [];
-    let currentIssue = null;
-
-    lines.forEach(line => {
-      line = line.trim();
-
-      // Look for issue markers
-      if (line.match(/^\d+\./)) {
-        if (currentIssue) {
-          issues.push(currentIssue);
-        }
-        currentIssue = {
-          title: line.replace(/^\d+\.\s*/, ''),
-          description: '',
-          severity: 'info',
-          category: 'quality'
-        };
-      } else if (currentIssue && line) {
-        currentIssue.description += line + ' ';
-      }
-    });
-
-    if (currentIssue) {
-      issues.push(currentIssue);
-    }
+     const issues = analysis.issues || [];
+  const positives = analysis.positives || [];
+  const score = analysis.score || 0;
 
     return {
-      summary: 'Code review completed',
-      issues,
-      positives: [],
-      score: 75
+      summary: analysis.summary,
+      issues:issues,
+      positives: positives,
+      score: score
     };
   }
 }
