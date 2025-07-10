@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { logger } from '../utils/logger.js';
-
+import axios from 'axios';
 export class OpenAIService {
   constructor() {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -22,9 +22,10 @@ export class OpenAIService {
   async analyzeCode(diff, context) {
 
     const prompt = this.buildPrompt(diff, context);
-
     const response = await this.makeOpenAIRequest(prompt, context);
     const analysis = response.choices[0].message.content;
+    // const response = await this.makeOllamaRequest(prompt, context);
+    // const analysis = response.message.content;
     return this.parseAnalysis(analysis);
   }
 
@@ -79,7 +80,35 @@ export class OpenAIService {
       throw error;
     }
   }
+  async makeOllamaRequest(prompt, context, modelToTry = null) {
+    const model = modelToTry || 'codellama:7b-instruct';
 
+    try {
+      logger.info(`Attempting to use model: ${model}`);
+
+      const messages = [
+        {
+          role: 'system',
+          content: this.getSystemPrompt(context),
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ];
+
+      const response = await axios.post('http://localhost:11434/api/chat', {
+        model,
+        messages,
+        stream: false,
+      });
+
+      return response.data; // Or response.data.message.content;
+    } catch (error) {
+      logger.error(`Ollama request failed: ${error.message}`);
+      throw error;
+    }
+  }
 
   getSystemPrompt(context) {
     let systemPrompt = `You are an expert code reviewer specializing in ${context.language} development. 

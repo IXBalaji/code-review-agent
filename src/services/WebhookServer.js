@@ -91,12 +91,12 @@ export class WebhookServer {
         </head>
         <body>
           <div class="container">
-            <h1>🤖 PR Code Review Utility</h1>
-            <p class="subtitle">AI-powered code review for your GitHub pull requests</p>
+            <h1>🤖 Smart Code Review Assistant</h1>
+            <p class="subtitle">Supercharge your code with AI-powered reviews and insights</p>
             
             <form id="reviewForm">
               <div class="form-group">
-                <label for="prUrl">GitHub PR URL:</label>
+                <label for="prUrl"> Pull Request URL:</label>
                 <input 
                   type="url" 
                   id="prUrl" 
@@ -107,18 +107,12 @@ export class WebhookServer {
               </div>
               
               <button type="submit" name="action" value="review">🔍 Review PR</button>
-              <button type="submit" name="action" value="dry-run" class="dry-run">👁️ Dry Run</button>
+              
             </form>
             
             <div id="status" class="status"></div>
             
-            <div class="endpoints">
-              <h3>API Endpoints</h3>
-              <div class="endpoint">GET /health - Health check</div>
-              <div class="endpoint">POST /webhook/github - GitHub webhook</div>
-              <div class="endpoint">POST /review - Manual review trigger</div>
-              <div class="endpoint">POST /review-url - Review by PR URL</div>
-            </div>
+            
           </div>
 
           <script>
